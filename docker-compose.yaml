@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3.9.13-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    hostname: rabbitmq #Rabbitmq uses the hostname as part of the folder name that store data 
+    networks:
+      - rabbitmq_net
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=123
+
+volumes:
+  rabbitmq:
+
+networks:
+  rabbitmq_net:
+    driver: bridge
