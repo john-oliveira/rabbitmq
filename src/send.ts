@@ -1,25 +1,28 @@
-import amqp, { Connection } from "amqplib";
+import amqp from "amqplib";
 
 const user = 'admin';
 const pass = '123';
-var exchange = 'ex.direct';
-var exchangeType = 'direct';
-var routingKey = 'test';
+const exchange = 'ex.direct';
+const exchangeType = 'direct';
+const routingKey = 'test';
 
 const send = async (msg: string) => {
     const connection = await amqp.connect(`amqp://${user}:${pass}@localhost:5672`);
-    const channel = await connection.createChannel();
-    await channel.assertExchange(exchange, exchangeType, { durable: true });
-    channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true });
-    console.log(" [x] Sent %s", msg);
-    await channel.close();
-    connection.close();
+    let i: number;
+    const quantity: number = 1000000;
+    for(i=1;i<=quantity;i++){
+        const channel = await connection.createChannel();
+        await channel.assertExchange(exchange, exchangeType, { durable: true });
+        let message = `${msg} - ${i}`;
+        channel.publish(exchange, routingKey, Buffer.from(message), { persistent: true });
+        console.log(" [x] Sent %s", message);
+        if(i != quantity){
+            channel.close();
+        }else{
+            await channel.close();
+            connection.close();//closing connection after await to close the channel to avoid to lose the last message
+        }
+    };
 }
 
-var number = 1;
-const timer = setInterval(()=>{
-    send(`Hello World! - ${number++}`);
-    if(number > 10000){
-        clearInterval(timer);
-    }
-}, 1)
+send('Hello World!');

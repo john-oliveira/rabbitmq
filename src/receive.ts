@@ -1,11 +1,11 @@
-import amqp, { Connection } from "amqplib";
+import amqp from "amqplib";
 
 const user = 'admin';
 const pass = '123';
-var exchange = 'ex.direct';
-var exchangeType = 'direct';
-var queue = 'payment';
-var bindingKey = 'test'; //fanout exchange ignore binding key
+const exchange = 'ex.direct';
+const exchangeType = 'direct';
+const queue = 'payment';
+const bindingKey = 'test'; //fanout exchange ignore binding key
 
 const receive = async () => {
     const connection = await amqp.connect(`amqp://${user}:${pass}@localhost:5672`);
@@ -24,20 +24,11 @@ const receive = async () => {
 
     channel.consume(queue, (msg) => {
         console.log(" [x] %s: '%s'", msg!.fields.routingKey, msg!.content.toString());
-        sleep(100); //Fake process
         channel.ack(msg!);
         console.log(" [x] Done");
     }, {
         noAck: false //noAck means "no manual acknowledgements", so, automatic mode.
     });
-}
-
-function sleep(milliseconds: number) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
 }
 
 receive();
