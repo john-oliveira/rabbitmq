@@ -12,10 +12,8 @@ const send = async (msg: string) => {
     await channel.assertExchange(exchange, exchangeType, { durable: true });
     channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true });
     console.log(" [x] Sent %s", msg);
-    channel.close();
-    setTimeout(() => {
-        connection.close();
-    }, 500);
+    await channel.close();
+    connection.close();
 }
 
 var number = 1;
@@ -24,4 +22,4 @@ const timer = setInterval(()=>{
     if(number > 10000){
         clearInterval(timer);
     }
-}, 5)
+}, 1)
