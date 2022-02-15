@@ -1,14 +1,14 @@
 import amqp, { Connection } from "amqplib";
 
 class RabbitMQChannelFactory {
-    // @ts-ignore
-    private _conn: Connection;
+    
+    private _conn!: Connection;
 
-    constructor(private uri: string) { }
+    constructor(private _uri: string) { }
 
     private async _connection(){
         if(!this._conn){
-            this._conn = await amqp.connect(this.uri);
+            this._conn = await amqp.connect(this._uri);
         }
         return this._conn;
     }
