@@ -1,4 +1,5 @@
 import amqp, { Connection } from "amqplib";
+import { ENV } from "./environment";
 
 class RabbitMQChannelFactory {
     
@@ -20,6 +21,6 @@ class RabbitMQChannelFactory {
 
  }
 
-const user = 'admin';
-const pass = '123';
-export const factory = new RabbitMQChannelFactory(`amqp://${user}:${pass}@localhost:5672`);
+const RABBITMQ_URI = `amqp://${ENV.RABBITMQ_USER}:${ENV.RABBITMQ_PASS}@${ENV.RABBITMQ_HOST}:${ENV.RABBITMQ_PORT}`;
+
+export const factory = new RabbitMQChannelFactory(RABBITMQ_URI);
